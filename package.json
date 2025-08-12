@@ -1,0 +1,15 @@
+{
+  "name": "emulatorjs-firebase",
+  "version": "1.0.0",
+  "description": "Multi-game emulator hosted on Firebase with auto game list generator",
+  "main": "generate-games.js",
+  "scripts": {
+    "predeploy": "node generate-games.js",
+    "deploy": "firebase deploy",
+    "build-games": "node generate-games.js",
+    "serve": "firebase emulators:start --only hosting"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

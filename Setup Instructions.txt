@@ -1,0 +1,84 @@
+Thank you for downloading!
+
+This emulator is a static build of emulator-js made to be hosted and configured on Google Firebase. Emulator-js Official Repository Link: https://github.com/EmulatorJS/EmulatorJS
+
+Enjoy!!!!!!!!! :)
+
+
+Setup Guide: I already did all the hard work so setup is incredibly easy. This guide is mainly for Windows but should be quite similar on other OSs.
+
+Step 1: Download and install Nodejs (preferably the latest build) from https://nodejs.org/en/download.
+
+Step 2: Place all roms EXCEPT PSP games into the /public/roms directory in this folder. Due to the fact that PSP and PSX(PlayStation One) roms tend to both end in .iso file extensions, telling which is which is difficult for the code. So instead place PSP files in the /public/roms/PSP directory so they can be distinguished.
+
+Step 3: Open a Command Prompt/Windows Powershell (or whatever the equivalent is for your operating system) and run the command powershell -ExecutionPolicy Bypass.
+This command will need to be run before any other command any time you add more games because it temporarily allows running commands on your device. (At least on Windows) 
+
+Step 4: 
+Run npm install -g firebase-tools. (This will ensure Firebase compatibility on your device and should only be needed on the initial deployment/upload.
+
+Step 5: firebase login (This should open your default web browser and prompt you to log into google firebase.) Log in and make sure you have a empty project created in Firebase Console. 
+
+Step 6: Make sure your project folder looks like this:
+
+emulatorjs-firebase-setup/
+│
+├── public/
+│   ├── index.html
+│   ├── games.json
+│   ├── roms/
+│   │   ├── psp/
+│   │   ├── n64/
+│   │   └── ...
+│   └── other assets...
+│
+├── generateGames.js
+└── firebase.json   (will be created in step 7)
+
+Step 7: In your project folder:
+
+firebase init hosting
+
+    Select your Firebase project (or create a new one in the console first).
+
+    Public directory: public
+
+    Configure as a single-page app: n (No)
+
+    Overwrite index.html: n (No)
+
+
+Step 8: Every time you add/change ROMs:
+
+node generateGames.js
+
+This ensures games.json (The game directory) is up-to-date.
+
+
+Step 9: Deploy to Firebase
+
+firebase deploy
+
+Once done, Firebase will give you a Hosting URL like:
+
+https://your-project-id.web.app
+
+Your emulator will now run directly online.
+
+Extras:
+ Updating in the Future
+
+    Add ROMs into public/roms/ and PSP roms into public/roms/psp
+
+    Run:
+
+node generateGames.js
+firebase deploy
+
+
+PSP games may be stuck loading on the "Download Game Data" screen for a while. Be patient! They are big games and can take longer!!!!!!!!!! :)
+
+Note: Due to the emulator being web-hosted, saving and loading states doesn't work. Instead, save the game manually to your device and load the file. Then restart the emulator and game!!!!!!!!! :)
+
+
+Enjoy your emulator!!!!!!!!!!! :)
