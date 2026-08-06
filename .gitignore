@@ -1,4 +1,6 @@
-public/roms/
+public/roms/**/*
+!public/roms/**/
+!public/roms/**/.gitkeep
 public/bios/
 public/emulatorjs/data/
 .firebase/
