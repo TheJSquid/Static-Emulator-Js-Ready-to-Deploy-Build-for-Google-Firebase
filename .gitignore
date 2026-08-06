@@ -1,0 +1,5 @@
+public/roms/
+public/bios/
+public/emulatorjs/data/
+.firebase/
+node_modules/
