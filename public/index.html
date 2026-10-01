@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>EmulatorJS Multi-Game Loader</title>
+  <style>
+    body, html { margin: 0; padding: 0; height: 100%; background: #000; color: white; font-family: sans-serif; }
+    #menu { position: fixed; top: 10px; left: 10px; background: rgba(255,255,255,0.9); padding: 10px; border-radius: 8px; z-index: 10; color: black; }
+    select, button { font-size: 16px; padding: 8px; margin-top: 5px; width: 300px; }
+    #game { width: 100%; height: 100vh; background: black; margin-top: 60px; }
+  </style>
+</head>
+<body>
+  <div id="menu">
+    <label for="gameSelector">Select a game:</label><br />
+    <select id="gameSelector"></select><br />
+    <button id="startBtn" disabled>Start Game</button>
+  </div>
+
+  <div id="game"></div>
+
+  <script>
+    const selector = document.getElementById('gameSelector');
+    const startBtn = document.getElementById('startBtn');
+    const gameDiv = document.getElementById('game');
+
+    function loadGameFromParams(core, url) {
+      window.EJS_core = core;
+      window.EJS_gameUrl = url;
+      window.EJS_player = "#game";
+      window.EJS_pathtodata = "/emulatorjs/data/";
+      window.EJS_startOnLoaded = true;
+      window.EJS_multiplayer = false;
+      window.EJS_threads = true;
+      window.EJS_saveStateID = `${core}_${url}`;
+
+      const script = document.createElement('script');
+      script.id = 'emulatorScript';
+      script.src = window.EJS_pathtodata + 'loader.js';
+      script.onload = () => console.log("✅ EmulatorJS loaded.");
+      document.body.appendChild(script);
+
+      startBtn.disabled = true;
+      startBtn.textContent = "Game Loaded";
+    }
+
+    fetch('games.json')
+      .then(res => res.json())
+      .then(games => {
+        games.forEach(game => {
+          const option = document.createElement('option');
+          option.value = `${game.core}|${game.url}`;
+          option.textContent = game.name;
+          selector.appendChild(option);
+        });
+
+        const params = new URLSearchParams(location.search);
+        const requested = params.get('game');
+
+        if (requested) {
+          // A game was requested via URL - this is a fresh page load, so no
+          // previous audio/WASM instance exists to clean up. Select it in
+          // the dropdown and boot it immediately.
+          selector.value = requested;
+          startBtn.disabled = false;
+          const [core, url] = requested.split('|');
+          loadGameFromParams(core, url);
+        } else if (games.length > 0) {
+          startBtn.disabled = false;
+        }
+      });
+
+    selector.addEventListener('change', () => {
+      startBtn.disabled = false;
+      startBtn.textContent = "Start Game";
+    });
+
+    startBtn.addEventListener('click', () => {
+      // Reload the page with the chosen game in the URL, instead of
+      // swapping the emulator in-place. EmulatorJS doesn't expose a clean
+      // way to fully tear down a running game's audio/WASM instance, so a
+      // real page reload is what actually stops the previous game's audio.
+      const url = new URL(location.href);
+      url.search = '?game=' + encodeURIComponent(selector.value);
+      location.href = url.toString();
+    });
+  </script>
+</body>
+</html>
