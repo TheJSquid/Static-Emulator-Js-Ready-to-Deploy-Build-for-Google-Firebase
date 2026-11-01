@@ -1,8 +1,21 @@
-# Downloads the missing EmulatorJS core .data files into public/emulatorjs/data/cores
+# Downloads the EmulatorJS runtime files AND the core .data files into public/emulatorjs/data
 # Run from the project root: powershell -ExecutionPolicy Bypass -File .\get-cores.ps1
+#
+# The runtime (loader.js, emulator.min.js, ...) and the cores must come from the
+# SAME build. A mismatch can make games boot but break features like save states,
+# so this script always refreshes both together.
 
-$base = "https://cdn.emulatorjs.org/stable/data/cores"
-$dest = "public\emulatorjs\data\cores"
+$dataBase = "https://cdn.emulatorjs.org/stable/data"
+$dataDest = "public\emulatorjs\data"
+$base = "$dataBase/cores"
+$dest = "$dataDest\cores"
+
+# Runtime files
+New-Item -ItemType Directory -Force -Path $dataDest | Out-Null
+foreach ($f in @("loader.js", "emulator.min.js", "emulator.min.css", "version.json")) {
+    Write-Host "Downloading runtime file $f"
+    Invoke-WebRequest -Uri "$dataBase/$f" -OutFile (Join-Path $dataDest $f) -UseBasicParsing
+}
 
 $cores = @(
     "mgba",              # GBA
@@ -59,4 +72,4 @@ Write-Host "Downloading cores.json"
 Invoke-WebRequest -Uri "$base/cores.json" -OutFile (Join-Path $dest "cores.json") -UseBasicParsing
 
 Write-Host ""
-Write-Host "Done. Cores are in $dest"
+Write-Host "Done. Runtime files are in $dataDest and cores are in $dest"

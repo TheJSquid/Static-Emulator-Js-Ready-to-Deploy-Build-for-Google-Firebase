@@ -47,16 +47,19 @@ scratch.)
 
 ## 4. Download the EmulatorJS runtime + cores
 
-Cores aren't committed to the repo (they're large, and easy to re-fetch).
-Pull them with the included script:
+The runtime and cores aren't committed to the repo (they're large, and easy
+to re-fetch). Pull both with the included script:
 
-```powershell
-powershell -ExecutionPolicy Bypass -File .\get-cores.ps1
-```
+    powershell -ExecutionPolicy Bypass -File .\get-cores.ps1
 
-This fills `public/emulatorjs/data/` with the loader, runtime, and core
-`.data` files for every system the project supports. Edit the `$cores`
-array in that script first if you only want a subset.
+This fills public/emulatorjs/data/ with the runtime files (loader.js,
+emulator.min.js, emulator.min.css, version.json) and the core .data files
+for every system the project supports. Edit the $cores array in that script
+first if you only want a subset.
+
+Always re-run the whole script when you update. The runtime and cores must
+come from the same build; if they get out of sync, games may still boot
+but features like save states can fail silently.
 
 ## 5. Add your own ROMs
 
@@ -123,3 +126,10 @@ Your site will be live at `https://<your-project-id>.web.app`.
   selecting "Load Content" in that menu and picking the file works fine.
 - Some systems (NDS, PSX) may need real BIOS files for full compatibility,
   though EmulatorJS's melonDS core has worked without one in testing here.
+- If Save State shows "Failed to save state" with nothing in the browser
+  console, the runtime files and cores are probably from different builds.
+  Re-run get-cores.ps1 (it refreshes both), redeploy, and hard-refresh
+  (Ctrl+Shift+R).
+- Hidden files such as .gitkeep must be skipped by Generategames.js, or they
+  show up as entries in the game dropdown. Make sure scanRoms() has
+  `if (file.startsWith('.')) return;` at the top of its files loop.
