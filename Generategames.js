@@ -98,6 +98,7 @@ function scanRoms(dir, baseDir = ROMS_DIR) {
   });
 
   files.forEach(file => {
+    if (file.startsWith('.')) return; // skip .gitkeep and other hidden files
     const fullPath = path.join(dir, file);
     const ext = path.extname(file).toLowerCase();
     const core = detectCore(fullPath);
